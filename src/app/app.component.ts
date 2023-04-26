@@ -1,11 +1,10 @@
-// app.component.ts
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 interface ConvertResponse {
-  success: boolean;
-  song_title?: string;
-  song_link?: string;
+  status: boolean;
+  title?: string;
+  link?: string;
   message?: string;
 }
 
@@ -28,14 +27,19 @@ export class AppComponent {
     this.errorMessage = undefined;
 
     this.http
-      .post<ConvertResponse>('/convert-mp3', { videoUrl: this.videoUrl })
+      .get<ConvertResponse>('https://youtube-mp36.p.rapidapi.com/dl', {
+        headers: {
+          'X-RapidAPI-Key': process.env['API_KEY'] || '',
+          'X-RapidAPI-Host': process.env['API_HOST'] || '',
+        },
+        params: { id: this.videoUrl },
+      })
       .subscribe(
         (response) => {
-          this.success = response.success;
-
-          if (response.success) {
-            this.songTitle = response.song_title;
-            this.songLink = response.song_link;
+          this.success = response.status;
+          if (response.status) {
+            this.songTitle = response.title;
+            this.songLink = response.link;
           } else {
             this.errorMessage = response.message;
           }
