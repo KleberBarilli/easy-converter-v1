@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { EnvProvider } from 'src/environments/EnvProvider';
 
 interface ConvertResponse {
   status: boolean;
@@ -20,7 +21,7 @@ export class AppComponent {
   songLink: string | undefined;
   errorMessage: string | undefined;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private env: EnvProvider) {}
 
   convertVideo() {
     this.success = undefined;
@@ -35,8 +36,8 @@ export class AppComponent {
     this.http
       .get<ConvertResponse>('https://youtube-mp36.p.rapidapi.com/dl', {
         headers: {
-          'X-RapidAPI-Key': process.env['API_KEY'] || '',
-          'X-RapidAPI-Host': process.env['API_HOST'] || '',
+          'X-RapidAPI-Key': this.env.API_KEY,
+          'X-RapidAPI-Host': this.env.API_HOST,
         },
         params: { id: videoId },
       })
