@@ -26,13 +26,19 @@ export class AppComponent {
     this.success = undefined;
     this.errorMessage = undefined;
 
+    const regExp =
+      /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+    const match = this.videoUrl.match(regExp);
+
+    const videoId = match && match[7].length == 11 ? match[7] : false;
+
     this.http
       .get<ConvertResponse>('https://youtube-mp36.p.rapidapi.com/dl', {
         headers: {
           'X-RapidAPI-Key': process.env['API_KEY'] || '',
           'X-RapidAPI-Host': process.env['API_HOST'] || '',
         },
-        params: { id: this.videoUrl },
+        params: { id: videoId },
       })
       .subscribe(
         (response) => {
